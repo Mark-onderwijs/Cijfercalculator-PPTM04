@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cijfercalculator</title>
+  <style>
+    :root {
+      /*
+        Aeres-geinspireerde visuele stijl
+        Openbare bron noemt als kernkleuren: donkergroen, lichtgroen en lichtblauw.
+        Exacte huisstijl-hex-codes staan niet op de openbare nieuwspagina.
+      */
+      --aeres-dark-green: #004c3f;
+      --aeres-green: #77b82a;
+      --aeres-light-green: #d8ecb5;
+      --aeres-light-blue: #bfe4ee;
+      --aeres-blue-soft: #e8f6f9;
+      --aeres-cream: #f5f3e8;
+      --aeres-white: #ffffff;
+      --text: #12342e;
+      --muted: #5c716b;
+      --border: #cfded7;
+      --danger: #9b1c1c;
+      --danger-bg: #fff1f1;
+      --ok-bg: #edf8f1;
+      --warn-bg: #fff8e6;
+      --shadow: 0 18px 45px rgba(0, 76, 63, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at 8% 10%, rgba(119, 184, 42, 0.26) 0, rgba(119, 184, 42, 0.26) 95px, transparent 96px),
+        radial-gradient(circle at 94% 6%, rgba(191, 228, 238, 0.75) 0, rgba(191, 228, 238, 0.75) 170px, transparent 171px),
+        linear-gradient(135deg, var(--aeres-cream), var(--aeres-blue-soft));
+      color: var(--text);
+      line-height: 1.45;
+      min-height: 100vh;
+    }
+
+    .page {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 32px 20px;
+    }
+
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+      color: var(--aeres-dark-green);
+    }
+
+    .brand-wordmark {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      font-size: 2rem;
+    }
+
+    .brand-circle {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 62% 40%, var(--aeres-light-blue) 0, var(--aeres-light-blue) 21%, transparent 22%),
+        conic-gradient(from 35deg, var(--aeres-green), var(--aeres-light-green), var(--aeres-light-blue), var(--aeres-dark-green), var(--aeres-green));
+      border: 3px solid var(--aeres-white);
+      box-shadow: 0 8px 22px rgba(0, 76, 63, 0.18);
+      flex: 0 0 auto;
+    }
+
+    .brand-payoff {
+      color: var(--muted);
+      font-size: 0.98rem;
+      text-align: right;
+    }
+
+    .card {
+      position: relative;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid rgba(0, 76, 63, 0.12);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      padding: 30px;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      top: -120px;
+      right: -90px;
+      width: 270px;
+      height: 270px;
+      border-radius: 50%;
+      background: rgba(191, 228, 238, 0.46);
+      z-index: 0;
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      bottom: -135px;
+      left: -110px;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      border: 42px solid rgba(119, 184, 42, 0.22);
+      z-index: 0;
+    }
+
+    .card-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    h1 {
+      margin: 0 0 10px 0;
+      font-size: clamp(2rem, 4vw, 3.1rem);
+      line-height: 1.04;
+      color: var(--aeres-dark-green);
+      letter-spacing: -0.05em;
+    }
+
+    .intro {
+      margin: 0 0 20px 0;
+      color: var(--muted);
+      max-width: 760px;
+      font-size: 1.05rem;
+    }
+
+    .teacher-note {
+      border: 1px solid rgba(0, 76, 63, 0.12);
+      border-left: 7px solid var(--aeres-green);
+      border-radius: 18px;
+      background: linear-gradient(90deg, rgba(216, 236, 181, 0.45), rgba(255, 255, 255, 0.78));
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      color: var(--text);
+      font-size: 0.98rem;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 16px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: var(--aeres-white);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 600px;
+    }
+
+    th,
+    td {
+      padding: 13px 14px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      background: var(--aeres-dark-green);
+      color: var(--aeres-white);
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    th:first-child {
+      border-top-left-radius: 18px;
+    }
+
+    th:last-child {
+      border-top-right-radius: 18px;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:nth-child(even) {
+      background: rgba(191, 228, 238, 0.18);
+    }
+
+    tbody tr:hover {
+      background: rgba(216, 236, 181, 0.33);
+    }
+
+    input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 1rem;
+      background: #fff;
+      color: var(--text);
+    }
+
+    input:focus {
+      outline: 3px solid rgba(119, 184, 42, 0.24);
+      border-color: var(--aeres-green);
+    }
+
+    .fixed-text {
+      font-weight: 700;
+      color: var(--aeres-dark-green);
+    }
+
+    .col-number {
+      width: 10%;
+    }
+
+    .col-name {
+      width: 48%;
+    }
+
+    .col-weight {
+      width: 18%;
+    }
+
+    .col-grade {
+      width: 24%;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 11px 18px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.15s ease-in-out;
+    }
+
+    .secondary {
+      background: var(--aeres-dark-green);
+      color: var(--aeres-white);
+      box-shadow: 0 8px 18px rgba(0, 76, 63, 0.16);
+    }
+
+    .secondary:hover {
+      background: #00372e;
+      transform: translateY(-1px);
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .result-box {
+      border: 1px solid rgba(0, 76, 63, 0.12);
+      border-radius: 22px;
+      padding: 18px;
+      background:
+        radial-gradient(circle at 92% 10%, rgba(191, 228, 238, 0.55) 0, rgba(191, 228, 238, 0.55) 38px, transparent 39px),
+        #ffffff;
+      min-height: 110px;
+    }
+
+    .result-label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin-bottom: 5px;
+    }
+
+    .result-value {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--aeres-dark-green);
+      letter-spacing: -0.04em;
+    }
+
+    .status {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: var(--warn-bg);
+      color: var(--text);
+    }
+
+    .status.ok {
+      background: var(--ok-bg);
+      border-color: rgba(119, 184, 42, 0.45);
+    }
+
+    .status.error {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border-color: #efb4b4;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 0.94rem;
+      margin-top: 18px;
+    }
+
+    code {
+      background: rgba(0, 76, 63, 0.08);
+      padding: 1px 5px;
+      border-radius: 5px;
+    }
+
+    .screenreader-only {
+      position: absolute;
+      left: -9999px;
+    }
+
+    @media (max-width: 760px) {
+      .page {
+        padding: 18px 12px;
+      }
+
+      .brand-bar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .brand-payoff {
+        text-align: left;
+      }
+
+      .brand-wordmark {
+        font-size: 1.7rem;
+      }
+
+      .card {
+        padding: 18px;
+        border-radius: 22px;
+      }
+
+      .result-grid {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        min-width: 540px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="brand-bar" aria-label="Aeres stijl">
+      <div class="brand-wordmark">
+        <span class="brand-circle" aria-hidden="true"></span>
+        <span>Aeres</span>
+      </div>
+      <div class="brand-payoff">Cijfercalculator</div>
+    </div>
+
+    <section class="card" aria-labelledby="titel">
+      <div class="card-content">
+        <h1 id="titel">Cijfercalculator</h1>
+        <p class="intro">
+          Vul je behaalde cijfers in. De onderdelen en weegfactoren zijn vooraf ingesteld door de docent.
+          Gebruik eventueel een komma als decimaalteken, bijvoorbeeld 6,5.
+        </p>
+
+        <div class="teacher-note">
+          <strong>Regel:</strong> alle cijfers moeten minimaal 5,0 zijn.
+          Als één of meer ingevulde cijfers lager zijn dan 5,0, dan wordt het laagste cijfer het eindcijfer.
+        </div>
+
+        <div class="table-wrap">
+          <table aria-describedby="uitleg">
+            <caption class="screenreader-only">Onderdelen, weegfactoren en cijfers</caption>
+            <thead>
+              <tr>
+                <th class="col-number">Nr.</th>
+                <th class="col-name">Onderdeel</th>
+                <th class="col-weight">Weegfactor</th>
+                <th class="col-grade">Jouw cijfer</th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+
+        <p id="uitleg" class="small">
+          Zonder cijfer lager dan 5,0 wordt gerekend met:
+          eindcijfer = som(cijfer × weegfactor) / som(weegfactor).
+          Lege cijfers tellen nog niet mee in het voorlopige gemiddelde.
+        </p>
+
+        <div class="button-row">
+          <button class="secondary" type="button" onclick="clearGrades()">Cijfers wissen</button>
+        </div>
+
+        <div class="result-grid" aria-live="polite">
+          <div class="result-box">
+            <span class="result-label">Eindcijfer</span>
+            <span id="finalGrade" class="result-value">–</span>
+          </div>
+          <div class="result-box">
+            <span class="result-label">Ingevulde weging</span>
+            <span id="completedWeight" class="result-value">–</span>
+          </div>
+          <div class="result-box">
+            <span class="result-label">Status</span>
+            <span id="passStatus" class="result-value">–</span>
+          </div>
+        </div>
+
+        <div id="message" class="status">
+          Vul minimaal één cijfer in om het voorlopige eindcijfer te berekenen.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    /********************************************************************
+     * DOCENTINSTELLING
+     *
+     * Pas alleen dit blok aan.
+     *
+     * - name: naam van het onderdeel zoals de student die ziet.
+     * - weight: weegfactor van het onderdeel.
+     *
+     * De totale weging is hier 17.
+     ********************************************************************/
+    const assessmentConfig = [
+      { name: "Klimaat", weight: 1 },
+      { name: "Stekken", weight: 1 },
+      { name: "Vaasleven", weight: 1 },
+      { name: "Scouten", weight: 1 },
+      { name: "Sorteren", weight: 1 },
+      { name: "Enten", weight: 1 },
+      { name: "Zaden", weight: 1 },
+      { name: "Herbarium", weight: 1 },
+      { name: "Onkruiden", weight: 1 },
+      { name: "Excel", weight: 3 },
+      { name: "Gewasonderzoek", weight: 5 }
+    ];
+
+    /********************************************************************
+     * REKENREGELS
+     *
+     * Pas dit alleen aan als de opleiding/toetsregeling verandert.
+     ********************************************************************/
+    const minimumRequiredGrade = 5.0;
+    const sufficientGrade = 5.5;
+
+    const rowsElement = document.getElementById("rows");
+    const finalGradeElement = document.getElementById("finalGrade");
+    const completedWeightElement = document.getElementById("completedWeight");
+    const passStatusElement = document.getElementById("passStatus");
+    const messageElement = document.getElementById("message");
+
+    function parseDutchNumber(value) {
+      if (typeof value !== "string") return NaN;
+      const normalized = value.trim().replace(",", ".");
+      if (normalized === "") return NaN;
+      return Number(normalized);
+    }
+
+    function formatDutchNumber(value, decimals = 1) {
+      if (!Number.isFinite(value)) return "–";
+      return value.toFixed(decimals).replace(".", ",");
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;");
+    }
+
+    function setMessage(text, type = "neutral") {
+      messageElement.textContent = text;
+      messageElement.className = "status";
+
+      if (type === "ok") {
+        messageElement.classList.add("ok");
+      }
+
+      if (type === "error") {
+        messageElement.classList.add("error");
+      }
+    }
+
+    function buildRows() {
+      rowsElement.innerHTML = "";
+
+      assessmentConfig.forEach((assessment, index) => {
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+          <td>${index + 1}</td>
+          <td class="fixed-text">${escapeHtml(assessment.name)}</td>
+          <td>${formatDutchNumber(Number(assessment.weight), 1)}</td>
+          <td>
+            <label class="screenreader-only">Cijfer voor ${escapeHtml(assessment.name)}</label>
+            <input type="text" inputmode="decimal" placeholder="Bijv. 6,5" oninput="calculate()" />
+          </td>
+        `;
+
+        rowsElement.appendChild(tr);
+      });
+
+      calculate();
+    }
+
+    function clearGrades() {
+      rowsElement.querySelectorAll("input").forEach(input => {
+        input.value = "";
+      });
+      calculate();
+    }
+
+    function calculate() {
+      const rows = Array.from(rowsElement.querySelectorAll("tr"));
+
+      let weightedSum = 0;
+      let completedWeight = 0;
+      let completedRows = 0;
+      let lowestGrade = null;
+      let gradesBelowMinimum = [];
+      let errors = [];
+
+      rows.forEach((row, index) => {
+        const assessment = assessmentConfig[index];
+        const input = row.querySelector("input");
+
+        const gradeValue = input.value.trim();
+        const grade = parseDutchNumber(gradeValue);
+        const weight = Number(assessment.weight);
+
+        if (gradeValue === "") {
+          return;
+        }
+
+        if (!Number.isFinite(grade)) {
+          errors.push(`${assessment.name}: vul een geldig cijfer in.`);
+          return;
+        }
+
+        if (grade < 1 || grade > 10) {
+          errors.push(`${assessment.name}: het cijfer moet tussen 1,0 en 10,0 liggen.`);
+          return;
+        }
+
+        weightedSum += grade * weight;
+        completedWeight += weight;
+        completedRows += 1;
+
+        if (lowestGrade === null || grade < lowestGrade) {
+          lowestGrade = grade;
+        }
+
+        if (grade < minimumRequiredGrade) {
+          gradesBelowMinimum.push({
+            name: assessment.name,
+            grade: grade
+          });
+        }
+      });
+
+      if (errors.length > 0) {
+        finalGradeElement.textContent = "–";
+        completedWeightElement.textContent = formatDutchNumber(completedWeight, 1);
+        passStatusElement.textContent = "–";
+        setMessage(errors.join(" "), "error");
+        return;
+      }
+
+      if (completedRows === 0 || completedWeight === 0) {
+        finalGradeElement.textContent = "–";
+        completedWeightElement.textContent = "0,0";
+        passStatusElement.textContent = "–";
+        setMessage("Vul minimaal één cijfer in om het voorlopige eindcijfer te berekenen.", "neutral");
+        return;
+      }
+
+      const weightedGrade = weightedSum / completedWeight;
+      let finalGrade = weightedGrade;
+      let minimumRuleApplies = false;
+
+      if (gradesBelowMinimum.length > 0) {
+        finalGrade = lowestGrade;
+        minimumRuleApplies = true;
+      }
+
+      const roundedGrade = Math.round(finalGrade * 10) / 10;
+
+      finalGradeElement.textContent = formatDutchNumber(roundedGrade, 1);
+      completedWeightElement.textContent = formatDutchNumber(completedWeight, 1);
+      passStatusElement.textContent = roundedGrade >= sufficientGrade ? "Voldoende" : "Onvoldoende";
+
+      const totalWeight = assessmentConfig.reduce((sum, item) => sum + Number(item.weight), 0);
+      const missingWeight = totalWeight - completedWeight;
+
+      if (minimumRuleApplies) {
+        const problemList = gradesBelowMinimum
+          .map(item => `${item.name}: ${formatDutchNumber(item.grade, 1)}`)
+          .join("; ");
+
+        setMessage(
+          `De minimumregel is toegepast. Minimaal één cijfer is lager dan ${formatDutchNumber(minimumRequiredGrade, 1)} (${problemList}). Daarom is het laagste cijfer het eindcijfer.`,
+          "error"
+        );
+        return;
+      }
+
+      if (missingWeight > 0) {
+        setMessage(
+          `Dit is een voorlopig eindcijfer op basis van ${formatDutchNumber(completedWeight, 1)} van de ${formatDutchNumber(totalWeight, 1)} weegpunten. Er staat nog ${formatDutchNumber(missingWeight, 1)} weging open.`,
+          "neutral"
+        );
+      } else if (roundedGrade >= sufficientGrade) {
+        setMessage("Alle cijfers zijn ingevuld. Het berekende eindcijfer is voldoende volgens de grens van 5,5.", "ok");
+      } else {
+        setMessage("Alle cijfers zijn ingevuld. Het berekende eindcijfer is onvoldoende volgens de grens van 5,5.", "neutral");
+      }
+    }
+
+    buildRows();
+  </script>
+</body>
+</html>
