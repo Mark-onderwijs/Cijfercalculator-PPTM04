@@ -1,15 +1,21 @@
-<!DOCTYPE html>
+from pathlib import Path
+import base64
+
+logo_path = Path("/mnt/data/48bae257-96e8-4641-8de9-0cc791b01320.png")
+logo_b64 = base64.b64encode(logo_path.read_bytes()).decode("ascii")
+logo_data_uri = f"data:image/png;base64,{logo_b64}"
+
+html = f"""<!DOCTYPE html>
 <html lang="nl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cijfercalculator</title>
   <style>
-    :root {
+    :root {{
       /*
         Aeres-geinspireerde visuele stijl
-        Openbare bron noemt als kernkleuren: donkergroen, lichtgroen en lichtblauw.
-        Exacte huisstijl-hex-codes staan niet op de openbare nieuwspagina.
+        Logo is ingebed als data-URI, zodat er geen apart afbeeldingsbestand nodig is.
       */
       --aeres-dark-green: #004c3f;
       --aeres-green: #77b82a;
@@ -26,13 +32,13 @@
       --ok-bg: #edf8f1;
       --warn-bg: #fff8e6;
       --shadow: 0 18px 45px rgba(0, 76, 63, 0.12);
-    }
+    }}
 
-    * {
+    * {{
       box-sizing: border-box;
-    }
+    }}
 
-    body {
+    body {{
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
       background:
@@ -42,51 +48,37 @@
       color: var(--text);
       line-height: 1.45;
       min-height: 100vh;
-    }
+    }}
 
-    .page {
+    .page {{
       max-width: 980px;
       margin: 0 auto;
       padding: 32px 20px;
-    }
+    }}
 
-    .brand-bar {
+    .brand-bar {{
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
       margin-bottom: 18px;
       color: var(--aeres-dark-green);
-    }
+    }}
 
-    .brand-wordmark {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      font-size: 2rem;
-    }
+    .brand-logo {{
+      display: block;
+      width: min(260px, 55vw);
+      height: auto;
+    }}
 
-    .brand-circle {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      background:
-        radial-gradient(circle at 62% 40%, var(--aeres-light-blue) 0, var(--aeres-light-blue) 21%, transparent 22%),
-        conic-gradient(from 35deg, var(--aeres-green), var(--aeres-light-green), var(--aeres-light-blue), var(--aeres-dark-green), var(--aeres-green));
-      border: 3px solid var(--aeres-white);
-      box-shadow: 0 8px 22px rgba(0, 76, 63, 0.18);
-      flex: 0 0 auto;
-    }
-
-    .brand-payoff {
+    .brand-payoff {{
       color: var(--muted);
       font-size: 0.98rem;
       text-align: right;
-    }
+      font-weight: 700;
+    }}
 
-    .card {
+    .card {{
       position: relative;
       overflow: hidden;
       background: rgba(255, 255, 255, 0.96);
@@ -94,9 +86,9 @@
       border-radius: 28px;
       box-shadow: var(--shadow);
       padding: 30px;
-    }
+    }}
 
-    .card::before {
+    .card::before {{
       content: "";
       position: absolute;
       top: -120px;
@@ -106,9 +98,9 @@
       border-radius: 50%;
       background: rgba(191, 228, 238, 0.46);
       z-index: 0;
-    }
+    }}
 
-    .card::after {
+    .card::after {{
       content: "";
       position: absolute;
       bottom: -135px;
@@ -118,29 +110,29 @@
       border-radius: 50%;
       border: 42px solid rgba(119, 184, 42, 0.22);
       z-index: 0;
-    }
+    }}
 
-    .card-content {
+    .card-content {{
       position: relative;
       z-index: 1;
-    }
+    }}
 
-    h1 {
+    h1 {{
       margin: 0 0 10px 0;
       font-size: clamp(2rem, 4vw, 3.1rem);
       line-height: 1.04;
       color: var(--aeres-dark-green);
       letter-spacing: -0.05em;
-    }
+    }}
 
-    .intro {
+    .intro {{
       margin: 0 0 20px 0;
       color: var(--muted);
       max-width: 760px;
       font-size: 1.05rem;
-    }
+    }}
 
-    .teacher-note {
+    .teacher-note {{
       border: 1px solid rgba(0, 76, 63, 0.12);
       border-left: 7px solid var(--aeres-green);
       border-radius: 18px;
@@ -149,58 +141,58 @@
       margin-bottom: 20px;
       color: var(--text);
       font-size: 0.98rem;
-    }
+    }}
 
-    .table-wrap {
+    .table-wrap {{
       overflow-x: auto;
       margin-top: 16px;
       border: 1px solid var(--border);
       border-radius: 20px;
       background: var(--aeres-white);
-    }
+    }}
 
-    table {
+    table {{
       width: 100%;
       border-collapse: collapse;
       min-width: 600px;
-    }
+    }}
 
     th,
-    td {
+    td {{
       padding: 13px 14px;
       border-bottom: 1px solid var(--border);
       text-align: left;
       vertical-align: middle;
-    }
+    }}
 
-    th {
+    th {{
       background: var(--aeres-dark-green);
       color: var(--aeres-white);
       font-weight: 700;
       font-size: 0.95rem;
-    }
+    }}
 
-    th:first-child {
+    th:first-child {{
       border-top-left-radius: 18px;
-    }
+    }}
 
-    th:last-child {
+    th:last-child {{
       border-top-right-radius: 18px;
-    }
+    }}
 
-    tr:last-child td {
+    tr:last-child td {{
       border-bottom: none;
-    }
+    }}
 
-    tbody tr:nth-child(even) {
+    tbody tr:nth-child(even) {{
       background: rgba(191, 228, 238, 0.18);
-    }
+    }}
 
-    tbody tr:hover {
+    tbody tr:hover {{
       background: rgba(216, 236, 181, 0.33);
-    }
+    }}
 
-    input {
+    input {{
       width: 100%;
       padding: 10px 12px;
       border: 1px solid var(--border);
@@ -208,42 +200,42 @@
       font-size: 1rem;
       background: #fff;
       color: var(--text);
-    }
+    }}
 
-    input:focus {
+    input:focus {{
       outline: 3px solid rgba(119, 184, 42, 0.24);
       border-color: var(--aeres-green);
-    }
+    }}
 
-    .fixed-text {
+    .fixed-text {{
       font-weight: 700;
       color: var(--aeres-dark-green);
-    }
+    }}
 
-    .col-number {
+    .col-number {{
       width: 10%;
-    }
+    }}
 
-    .col-name {
+    .col-name {{
       width: 48%;
-    }
+    }}
 
-    .col-weight {
+    .col-weight {{
       width: 18%;
-    }
+    }}
 
-    .col-grade {
+    .col-grade {{
       width: 24%;
-    }
+    }}
 
-    .button-row {
+    .button-row {{
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
       margin-top: 18px;
-    }
+    }}
 
-    button {
+    button {{
       border: none;
       border-radius: 999px;
       padding: 11px 18px;
@@ -251,127 +243,139 @@
       font-weight: 700;
       cursor: pointer;
       transition: 0.15s ease-in-out;
-    }
+    }}
 
-    .secondary {
+    .secondary {{
       background: var(--aeres-dark-green);
       color: var(--aeres-white);
       box-shadow: 0 8px 18px rgba(0, 76, 63, 0.16);
-    }
+    }}
 
-    .secondary:hover {
+    .secondary:hover {{
       background: #00372e;
       transform: translateY(-1px);
-    }
+    }}
 
-    .result-grid {
+    .result-grid {{
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 14px;
       margin-top: 24px;
-    }
+    }}
 
-    .result-box {
+    .result-box {{
       border: 1px solid rgba(0, 76, 63, 0.12);
       border-radius: 22px;
       padding: 18px;
       background:
         radial-gradient(circle at 92% 10%, rgba(191, 228, 238, 0.55) 0, rgba(191, 228, 238, 0.55) 38px, transparent 39px),
         #ffffff;
-      min-height: 110px;
-    }
+      min-height: 120px;
+    }}
 
-    .result-label {
+    .result-label {{
       display: block;
       color: var(--muted);
       font-size: 0.92rem;
       margin-bottom: 5px;
-    }
+    }}
 
-    .result-value {
+    .result-value {{
+      display: block;
       font-size: 2rem;
       font-weight: 800;
       color: var(--aeres-dark-green);
       letter-spacing: -0.04em;
-    }
+      line-height: 1.1;
+    }}
 
-    .status {
+    .result-subtext {{
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.3;
+    }}
+
+    .result-warning {{
+      color: var(--danger);
+      font-weight: 700;
+    }}
+
+    .status {{
       margin-top: 18px;
       padding: 14px 16px;
       border-radius: 18px;
       border: 1px solid var(--border);
       background: var(--warn-bg);
       color: var(--text);
-    }
+    }}
 
-    .status.ok {
+    .status.ok {{
       background: var(--ok-bg);
       border-color: rgba(119, 184, 42, 0.45);
-    }
+    }}
 
-    .status.error {
+    .status.error {{
       background: var(--danger-bg);
       color: var(--danger);
       border-color: #efb4b4;
-    }
+    }}
 
-    .small {
+    .small {{
       color: var(--muted);
       font-size: 0.94rem;
       margin-top: 18px;
-    }
+    }}
 
-    code {
+    code {{
       background: rgba(0, 76, 63, 0.08);
       padding: 1px 5px;
       border-radius: 5px;
-    }
+    }}
 
-    .screenreader-only {
+    .screenreader-only {{
       position: absolute;
       left: -9999px;
-    }
+    }}
 
-    @media (max-width: 760px) {
-      .page {
+    @media (max-width: 760px) {{
+      .page {{
         padding: 18px 12px;
-      }
+      }}
 
-      .brand-bar {
+      .brand-bar {{
         align-items: flex-start;
         flex-direction: column;
-      }
+      }}
 
-      .brand-payoff {
+      .brand-payoff {{
         text-align: left;
-      }
+      }}
 
-      .brand-wordmark {
-        font-size: 1.7rem;
-      }
+      .brand-logo {{
+        width: min(220px, 75vw);
+      }}
 
-      .card {
+      .card {{
         padding: 18px;
         border-radius: 22px;
-      }
+      }}
 
-      .result-grid {
+      .result-grid {{
         grid-template-columns: 1fr;
-      }
+      }}
 
-      table {
+      table {{
         min-width: 540px;
-      }
-    }
+      }}
+    }}
   </style>
 </head>
 <body>
   <main class="page">
-    <div class="brand-bar" aria-label="Aeres stijl">
-      <div class="brand-wordmark">
-        <span class="brand-circle" aria-hidden="true"></span>
-        <span>Aeres</span>
-      </div>
+    <div class="brand-bar" aria-label="Aeres">
+      <img class="brand-logo" src="{logo_data_uri}" alt="Aeres" />
       <div class="brand-payoff">Cijfercalculator</div>
     </div>
 
@@ -419,8 +423,9 @@
             <span id="finalGrade" class="result-value">–</span>
           </div>
           <div class="result-box">
-            <span class="result-label">Ingevulde weging</span>
-            <span id="completedWeight" class="result-value">–</span>
+            <span class="result-label">Voortgang</span>
+            <span id="progressValue" class="result-value">–</span>
+            <span id="progressSubtext" class="result-subtext">–</span>
           </div>
           <div class="result-box">
             <span class="result-label">Status</span>
@@ -447,17 +452,17 @@
      * De totale weging is hier 17.
      ********************************************************************/
     const assessmentConfig = [
-      { name: "Klimaat", weight: 1 },
-      { name: "Stekken", weight: 1 },
-      { name: "Vaasleven", weight: 1 },
-      { name: "Scouten", weight: 1 },
-      { name: "Sorteren", weight: 1 },
-      { name: "Enten", weight: 1 },
-      { name: "Zaden", weight: 1 },
-      { name: "Herbarium", weight: 1 },
-      { name: "Onkruiden", weight: 1 },
-      { name: "Excel", weight: 3 },
-      { name: "Gewasonderzoek", weight: 5 }
+      {{ name: "Klimaat", weight: 1 }},
+      {{ name: "Stekken", weight: 1 }},
+      {{ name: "Vaasleven", weight: 1 }},
+      {{ name: "Scouten", weight: 1 }},
+      {{ name: "Sorteren", weight: 1 }},
+      {{ name: "Enten", weight: 1 }},
+      {{ name: "Zaden", weight: 1 }},
+      {{ name: "Herbarium", weight: 1 }},
+      {{ name: "Onkruiden", weight: 1 }},
+      {{ name: "Excel", weight: 3 }},
+      {{ name: "Gewasonderzoek", weight: 5 }}
     ];
 
     /********************************************************************
@@ -470,74 +475,92 @@
 
     const rowsElement = document.getElementById("rows");
     const finalGradeElement = document.getElementById("finalGrade");
-    const completedWeightElement = document.getElementById("completedWeight");
+    const progressValueElement = document.getElementById("progressValue");
+    const progressSubtextElement = document.getElementById("progressSubtext");
     const passStatusElement = document.getElementById("passStatus");
     const messageElement = document.getElementById("message");
 
-    function parseDutchNumber(value) {
+    function parseDutchNumber(value) {{
       if (typeof value !== "string") return NaN;
       const normalized = value.trim().replace(",", ".");
       if (normalized === "") return NaN;
       return Number(normalized);
-    }
+    }}
 
-    function formatDutchNumber(value, decimals = 1) {
+    function formatDutchNumber(value, decimals = 1) {{
       if (!Number.isFinite(value)) return "–";
       return value.toFixed(decimals).replace(".", ",");
-    }
+    }}
 
-    function escapeHtml(value) {
+    function escapeHtml(value) {{
       return String(value)
         .replaceAll("&", "&amp;")
         .replaceAll('"', "&quot;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;");
-    }
+    }}
 
-    function setMessage(text, type = "neutral") {
+    function setMessage(text, type = "neutral") {{
       messageElement.textContent = text;
       messageElement.className = "status";
 
-      if (type === "ok") {
+      if (type === "ok") {{
         messageElement.classList.add("ok");
-      }
+      }}
 
-      if (type === "error") {
+      if (type === "error") {{
         messageElement.classList.add("error");
-      }
-    }
+      }}
+    }}
 
-    function buildRows() {
+    function setProgress(completedRows, totalRows, completedWeight, totalWeight) {{
+      if (completedRows < totalRows) {{
+        const missingRows = totalRows - completedRows;
+        progressValueElement.textContent = "Nog niet compleet";
+        progressValueElement.classList.add("result-warning");
+        progressSubtextElement.textContent =
+          `${{missingRows}} cijfer(s) ontbreken. Ingevulde weging: ${{formatDutchNumber(completedWeight, 1)}} van ${{formatDutchNumber(totalWeight, 1)}}.`;
+      }} else {{
+        progressValueElement.textContent = "Compleet";
+        progressValueElement.classList.remove("result-warning");
+        progressSubtextElement.textContent =
+          `Alle cijfers zijn ingevuld. Totale weging: ${{formatDutchNumber(totalWeight, 1)}}.`;
+      }}
+    }}
+
+    function buildRows() {{
       rowsElement.innerHTML = "";
 
-      assessmentConfig.forEach((assessment, index) => {
+      assessmentConfig.forEach((assessment, index) => {{
         const tr = document.createElement("tr");
 
         tr.innerHTML = `
-          <td>${index + 1}</td>
-          <td class="fixed-text">${escapeHtml(assessment.name)}</td>
-          <td>${formatDutchNumber(Number(assessment.weight), 1)}</td>
+          <td>${{index + 1}}</td>
+          <td class="fixed-text">${{escapeHtml(assessment.name)}}</td>
+          <td>${{formatDutchNumber(Number(assessment.weight), 1)}}</td>
           <td>
-            <label class="screenreader-only">Cijfer voor ${escapeHtml(assessment.name)}</label>
+            <label class="screenreader-only">Cijfer voor ${{escapeHtml(assessment.name)}}</label>
             <input type="text" inputmode="decimal" placeholder="Bijv. 6,5" oninput="calculate()" />
           </td>
         `;
 
         rowsElement.appendChild(tr);
-      });
+      }});
 
       calculate();
-    }
+    }}
 
-    function clearGrades() {
-      rowsElement.querySelectorAll("input").forEach(input => {
+    function clearGrades() {{
+      rowsElement.querySelectorAll("input").forEach(input => {{
         input.value = "";
-      });
+      }});
       calculate();
-    }
+    }}
 
-    function calculate() {
+    function calculate() {{
       const rows = Array.from(rowsElement.querySelectorAll("tr"));
+      const totalRows = assessmentConfig.length;
+      const totalWeight = assessmentConfig.reduce((sum, item) => sum + Number(item.weight), 0);
 
       let weightedSum = 0;
       let completedWeight = 0;
@@ -546,7 +569,7 @@
       let gradesBelowMinimum = [];
       let errors = [];
 
-      rows.forEach((row, index) => {
+      rows.forEach((row, index) => {{
         const assessment = assessmentConfig[index];
         const input = row.querySelector("input");
 
@@ -554,95 +577,96 @@
         const grade = parseDutchNumber(gradeValue);
         const weight = Number(assessment.weight);
 
-        if (gradeValue === "") {
+        if (gradeValue === "") {{
           return;
-        }
+        }}
 
-        if (!Number.isFinite(grade)) {
-          errors.push(`${assessment.name}: vul een geldig cijfer in.`);
+        if (!Number.isFinite(grade)) {{
+          errors.push(`${{assessment.name}}: vul een geldig cijfer in.`);
           return;
-        }
+        }}
 
-        if (grade < 1 || grade > 10) {
-          errors.push(`${assessment.name}: het cijfer moet tussen 1,0 en 10,0 liggen.`);
+        if (grade < 1 || grade > 10) {{
+          errors.push(`${{assessment.name}}: het cijfer moet tussen 1,0 en 10,0 liggen.`);
           return;
-        }
+        }}
 
         weightedSum += grade * weight;
         completedWeight += weight;
         completedRows += 1;
 
-        if (lowestGrade === null || grade < lowestGrade) {
+        if (lowestGrade === null || grade < lowestGrade) {{
           lowestGrade = grade;
-        }
+        }}
 
-        if (grade < minimumRequiredGrade) {
-          gradesBelowMinimum.push({
+        if (grade < minimumRequiredGrade) {{
+          gradesBelowMinimum.push({{
             name: assessment.name,
             grade: grade
-          });
-        }
-      });
+          }});
+        }}
+      }});
 
-      if (errors.length > 0) {
+      setProgress(completedRows, totalRows, completedWeight, totalWeight);
+
+      if (errors.length > 0) {{
         finalGradeElement.textContent = "–";
-        completedWeightElement.textContent = formatDutchNumber(completedWeight, 1);
         passStatusElement.textContent = "–";
         setMessage(errors.join(" "), "error");
         return;
-      }
+      }}
 
-      if (completedRows === 0 || completedWeight === 0) {
+      if (completedRows === 0 || completedWeight === 0) {{
         finalGradeElement.textContent = "–";
-        completedWeightElement.textContent = "0,0";
         passStatusElement.textContent = "–";
         setMessage("Vul minimaal één cijfer in om het voorlopige eindcijfer te berekenen.", "neutral");
         return;
-      }
+      }}
 
       const weightedGrade = weightedSum / completedWeight;
       let finalGrade = weightedGrade;
       let minimumRuleApplies = false;
 
-      if (gradesBelowMinimum.length > 0) {
+      if (gradesBelowMinimum.length > 0) {{
         finalGrade = lowestGrade;
         minimumRuleApplies = true;
-      }
+      }}
 
       const roundedGrade = Math.round(finalGrade * 10) / 10;
 
       finalGradeElement.textContent = formatDutchNumber(roundedGrade, 1);
-      completedWeightElement.textContent = formatDutchNumber(completedWeight, 1);
       passStatusElement.textContent = roundedGrade >= sufficientGrade ? "Voldoende" : "Onvoldoende";
 
-      const totalWeight = assessmentConfig.reduce((sum, item) => sum + Number(item.weight), 0);
-      const missingWeight = totalWeight - completedWeight;
-
-      if (minimumRuleApplies) {
+      if (minimumRuleApplies) {{
         const problemList = gradesBelowMinimum
-          .map(item => `${item.name}: ${formatDutchNumber(item.grade, 1)}`)
+          .map(item => `${{item.name}}: ${{formatDutchNumber(item.grade, 1)}}`)
           .join("; ");
 
         setMessage(
-          `De minimumregel is toegepast. Minimaal één cijfer is lager dan ${formatDutchNumber(minimumRequiredGrade, 1)} (${problemList}). Daarom is het laagste cijfer het eindcijfer.`,
+          `De minimumregel is toegepast. Minimaal één cijfer is lager dan ${{formatDutchNumber(minimumRequiredGrade, 1)}} (${{problemList}}). Daarom is het laagste cijfer het eindcijfer.`,
           "error"
         );
         return;
-      }
+      }}
 
-      if (missingWeight > 0) {
+      if (completedRows < totalRows) {{
         setMessage(
-          `Dit is een voorlopig eindcijfer op basis van ${formatDutchNumber(completedWeight, 1)} van de ${formatDutchNumber(totalWeight, 1)} weegpunten. Er staat nog ${formatDutchNumber(missingWeight, 1)} weging open.`,
+          `Let op: nog niet alle cijfers zijn ingevuld. Het getoonde eindcijfer is voorlopig en gebaseerd op ${{completedRows}} van de ${{totalRows}} onderdelen.`,
           "neutral"
         );
-      } else if (roundedGrade >= sufficientGrade) {
+      }} else if (roundedGrade >= sufficientGrade) {{
         setMessage("Alle cijfers zijn ingevuld. Het berekende eindcijfer is voldoende volgens de grens van 5,5.", "ok");
-      } else {
+      }} else {{
         setMessage("Alle cijfers zijn ingevuld. Het berekende eindcijfer is onvoldoende volgens de grens van 5,5.", "neutral");
-      }
-    }
+      }}
+    }}
 
     buildRows();
   </script>
 </body>
 </html>
+"""
+
+path = Path("/mnt/data/cijfercalculator-aeres-logo-voortgang.html")
+path.write_text(html, encoding="utf-8")
+print(f"Bestand gemaakt: {path}")
